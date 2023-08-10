@@ -9,20 +9,46 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
+    volumes:
+      # time line sync
+      - /etc/localtime:/etc/localtime:ro
+      # # Data Back Up
+      # - /docker_data/containers/zookeeper/data:/data
+      # - /docker_data/containers/zookeeper/datalog:/datalog
+      # On Linux
+      # - /var/lib/docker/zookeeper/data 폴더를 EC2에 만들고, /data 와 마운트
+      # - /var/lib/docker/zookeeper/datalog 폴더를 EC2에 만들고, /datalog와 마운트
     ports:
       - "22181:2181"
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "10"
   kafka:
+    container_name: kafka
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
       - "29092:29092"
     environment:
-      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      # time line sync
+      - /etc/localtime:/etc/localtime:ro
+      # Data Back Up
+      # - /docker_data/containers/kafka/tmp/kafka-logs:/tmp/kafka-logs
+      # On Linux
+      # - /var/lib/docker/kafka/tmp/kafka-logs 폴더를 EC2에 만들고, /tmp/kafka-logs 와 마운트
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+        max-file: "10"
