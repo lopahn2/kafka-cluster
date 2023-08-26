@@ -31,15 +31,16 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "29092:29092"
+      - "19092:19092"
     environment:
       KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:19092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     volumes:
       # time line sync
       - /etc/localtime:/etc/localtime:ro
@@ -52,3 +53,30 @@ services:
       options:
         max-size: 50m
         max-file: "10"
+    command: >
+      bash -c "
+        sleep 10 &&
+        kafka-topics --create --topic SuiteRoom-Join --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Join-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Join-Completion-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Terminate --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Terminate-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Terminate-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic User-Registration-FCM --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic User-Registration-UserMetaInfo --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-CancelJoin --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-CancelJoin-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Join-CancelJoin-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Contract-Creation --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Contract-Delivery-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Study-MissionCreation --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Study-MissionCreation-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic HallOfFame-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic HallOfFame-Notification-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Start --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-Start-Error --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Start-Notification --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Study-Stop --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic Deposit-Detail --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092 &&
+        kafka-topics --create --topic SuiteRoom-End --partitions 3 --replication-factor 1 --bootstrap-server kafka:19092
+        "
