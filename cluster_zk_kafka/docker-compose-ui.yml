@@ -11,4 +11,4 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
       # - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:22181,zookeeper-1:32181,zookeeper-1:42181
       # - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      # - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
